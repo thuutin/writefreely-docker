@@ -41,7 +41,7 @@ docker compose run --rm --no-deps --entrypoint tar app -C /data -cf - . > writef
 docker compose start app
 ```
 
-To restore, stop the app and use a new Compose project name. Compose creates an empty volume for the restored blog and leaves the old volume intact. Keep the `keys/` directory with its matching database.
+To restore, stop the app and use a new Compose project name. Compose creates an empty volume for the restored blog and leaves the old volume intact. Keep the `keys/` directory with its matching database. After restoring, set `COMPOSE_PROJECT_NAME=writefreely-restored` in your local `.env` file so the usual backup, upgrade, and log commands continue to target the restored blog.
 
 ```sh
 docker compose stop app
@@ -51,7 +51,7 @@ docker compose -p writefreely-restored up -d
 
 ## Upgrade WriteFreely
 
-Update both `WRITEFREELY_REF` and `WRITEFREELY_COMMIT` in the Dockerfile to a matching upstream release tag and commit. After the backup, rebuild and run any database migration required by that WriteFreely release before starting it.
+Update `WRITEFREELY_REF` and `WRITEFREELY_COMMIT` in the Dockerfile to a matching upstream release tag and commit. Set `WRITEFREELY_VERSION` in a local `.env` file to the same release tag. Compose uses that value for the image tag, so the new release keeps a separate image from the previous one. After the backup, rebuild and run any database migration required by that WriteFreely release before starting it.
 
 ```sh
 docker compose stop app
@@ -60,4 +60,4 @@ docker compose run --rm app db migrate
 docker compose up -d
 ```
 
-Read the [upstream release notes](https://github.com/writefreely/writefreely/releases) for version-specific migration instructions. The image pins upstream source but package repositories and build dependencies can change; retain the image used for your last working deployment until the upgrade is confirmed.
+Read the [upstream release notes](https://github.com/writefreely/writefreely/releases) for version-specific migration instructions. Keep the previous `WRITEFREELY_VERSION` value to roll back to its image if needed. The image pins upstream source but package repositories and build dependencies can change; retain the image used for your last working deployment until the upgrade is confirmed.

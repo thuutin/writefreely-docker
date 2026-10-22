@@ -5,3 +5,4 @@ keys/
 *.db-shm
 *.db-wal
 writefreely-backup.tar
+.env
