@@ -1,0 +1,7 @@
+data/
+config.ini
+keys/
+*.db
+*.db-shm
+*.db-wal
+writefreely-backup.tar

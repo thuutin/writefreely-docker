@@ -1,0 +1,10 @@
+.git
+.gitignore
+README.md
+writefreely-backup.tar
+data/
+config.ini
+keys/
+*.db
+*.db-shm
+*.db-wal
