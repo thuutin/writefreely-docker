@@ -1,6 +1,6 @@
 # Self-host WriteFreely with Docker
 
-This repository builds [WriteFreely v0.17.2](https://github.com/writefreely/writefreely/tree/v0.17.2) from source and runs one blog with SQLite. Docker keeps the configuration, database, and encryption keys in the `writefreely-data` volume. A reverse proxy provides HTTPS.
+This repository builds [WriteFreely v0.17.2](https://github.com/writefreely/writefreely/tree/v0.17.2) from source and runs one blog with SQLite. Docker keeps the configuration, database, and encryption keys in the `writefreely-data` volume. A reverse proxy provides HTTPS. GitHub Actions builds the image on pull requests and publishes it to `ghcr.io/thuutin/writefreely-docker` on pushes to `main` and version tags.
 
 ## Start a blog
 
@@ -31,6 +31,8 @@ Install Docker with the Compose plugin. Set up a public domain and an HTTPS reve
 
 Open the public URL and sign in with the credentials you entered during setup. Use `docker compose logs -f app` to inspect startup errors.
 
+To use the published image instead of building locally, set `WRITEFREELY_VERSION` in `.env` to a published version and run `docker compose pull` before `docker compose up -d`. Stable version tags also update the `latest` tag. A new GHCR package is private by default; change its visibility in the package settings if you want anonymous users to pull it.
+
 ## Back up the blog
 
 Stop the app before archiving the volume so SQLite has a consistent state. Store the archive securely because it contains your configuration, account data, and encryption keys.
@@ -51,7 +53,7 @@ docker compose -p writefreely-restored up -d
 
 ## Upgrade WriteFreely
 
-Update `WRITEFREELY_REF` and `WRITEFREELY_COMMIT` in the Dockerfile to a matching upstream release tag and commit. Set `WRITEFREELY_VERSION` in a local `.env` file to the same release tag. Compose uses that value for the image tag, so the new release keeps a separate image from the previous one. After the backup, rebuild and run any database migration required by that WriteFreely release before starting it.
+Update `WRITEFREELY_REF` and `WRITEFREELY_COMMIT` in the Dockerfile to a matching upstream release tag and commit. Set `WRITEFREELY_VERSION` in a local `.env` file to the same version without the leading `v` (for example, `0.17.3`). Compose uses that value for the image tag, so the new release keeps a separate image from the previous one. After the backup, rebuild locally or push the matching `v0.17.3` Git tag to publish through GitHub Actions, then run any database migration required by that WriteFreely release before starting it.
 
 ```sh
 docker compose stop app
